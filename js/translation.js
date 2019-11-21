@@ -222,11 +222,23 @@ function createMainContent() {
 // default translate language menu:
 function defaultLangDropClick(drop) {
     if ($('#defLangMenu').html()) {
-        $('#defLangMenu').toggle('fast');
+        //if the menu hidden to show:
+        if ($('#defLangMenu').height() == 0) {
+            $('#defLangMenu').animate({
+                height: '71px'
+            }, 200, () => {
+                applyColors();
+            });
+        } else {
+            $('#defLangMenu').animate({ height: '0px', border: '0px' }, 200);
+        }
         return;
     }
     const menu = eHtml({ class: 'def-lang-menu', id: 'defLangMenu' });
-    menu.hide();
+    colors.B_COLOR_1.push(menu);
+    colors.COLOR_1.push(menu);
+    applyColors()
+    menu.height(0);
     menu.insertAfter(drop);
     langs.forEach((l) => {
         const lang = eHtml({
@@ -237,24 +249,25 @@ function defaultLangDropClick(drop) {
         lang.click(() => {
             defTrLang = l;
             $('#defaultLang').text(l);
-            $('#defLangMenu').toggle('fast');
+            $('#defLangMenu').animate({ height: '0px', border: '0px' }, 200);
             saveState();
             console.log(defTrLang)
         })
     })
-    menu.show('fast')
+    defaultLangDropClick(drop);
 }
 
 // to step 2
 function toStep2(step1Container) {
     saveState();
     console.log(step1Container.width())
+    step1Container.offset({ left: step1Container.width() * -1 });
     console.log('to step 2 :)')
 }
 
 // apply non selectable items:
-function applyNonSelectable(){
-    nonSelectableItems.forEach((item) =>{
+function applyNonSelectable() {
+    nonSelectableItems.forEach((item) => {
         item.addClass('non-select');
     })
 }

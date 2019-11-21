@@ -1,4 +1,4 @@
-*{
+* {
     margin: 0px;
 }
 
@@ -8,4 +8,87 @@
     -webkit-user-select: none;
     -o-user-select: none;
     user-select: none;
+}
+
+.pageHeader {
+    margin: 100px auto 56px auto;
+    text-align: center;
+    font-size: 48px;
+    color: #00143c;
+}
+
+.nav {
+    border-radius: 15px;
+    display: inline-flex;
+    padding: 16px;
+    margin-left: 12%;
+}
+
+.back-container {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    margin: 0px 4px;
+    cursor: pointer;
+}
+
+.nav-icon-container {
+    margin: 0px 4px;
+}
+
+.night-container {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    margin: 0px 8px;
+    cursor: pointer;
+}
+
+.step1-container {
+    text-align: center;
+    width: 350px;
+    margin: 100px auto 0px auto;
+}
+
+.default-lang-drop {
+    display: inline-flex;
+    padding: 4px 16px;
+    border-radius: 5px;
+}
+
+.default-lang-drop-icon-container {
+    margin-left: 8px;
+}
+
+.default-lang-drop {
+    margin-top: 16px;
+}
+
+.step-one-hint {
+    margin-top: 24px;
+    font-size: .9rem;
+}
+
+.start {
+    display: inline-block;
+    padding: 4px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 24px;
+    font-size: 1.3rem;
+}
+
+.default-lang-drop {
+    cursor: pointer;
+}
+
+#defLangMenu {
+    width: 60px;
+    margin: 8px auto;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.lang-menu-item {
+    cursor: pointer;
 }
