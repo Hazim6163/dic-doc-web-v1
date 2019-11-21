@@ -41,7 +41,8 @@ applyNonSelectable();
 // create navbar
 function createNavBar() {
     //nav:
-    const nav = eHtml({ class: 'nav', container: page });
+    const nav = eHtml({ class: 'nav' });
+    page.prepend(nav);
     // set nav colors:
     colors.BK_COLOR_6.push(nav);
     colors.COLOR_1.push(nav);
@@ -86,6 +87,7 @@ function initColors() {
     colors['BK_COLOR_4'] = new Array(); // #828282
     colors['BK_COLOR_5'] = new Array(); // #494949
     colors['BK_COLOR_6'] = new Array(); // #f1f1f1
+    colors['MAIN_BK'] = new Array(); // #ffffff
     // border color
     colors['B_COLOR_1'] = new Array(); // #00143c
     colors['B_COLOR_2'] = new Array(); // #9b0101
@@ -104,6 +106,7 @@ function applyColors() {
     let color4;
     let color5;
     let color6;
+    let background;
     if (!nightMode) {
         color1 = '#00143c';
         color2 = '#9b0101';
@@ -111,9 +114,11 @@ function applyColors() {
         color4 = '#828282';
         color5 = '#494949';
         color6 = '#f1f1f1';
+        background = '#ffffff';
     } else {
-        //todo fill night colors:
-        color3 = '#ffffff'
+        color6 = '#262626'
+        background = '#212121';
+        color1 = '#f1f1f1'
     }
     colors.COLOR_1.forEach(element => {
         element.css('color', color1);
@@ -151,23 +156,26 @@ function applyColors() {
     colors.BK_COLOR_6.forEach(element => {
         element.css('background-color', color6);
     });
+    colors.MAIN_BK.forEach(element => {
+        element.css('background-color', background);
+    });
     colors.B_COLOR_1.forEach(element => {
-        element.css('border', 'solid 1px ' + color1);
+        element.css('border', color1);
     });
     colors.B_COLOR_2.forEach(element => {
-        element.css('border', 'solid 1px ' + color2);
+        element.css('border-color', color2);
     });
     colors.B_COLOR_3.forEach(element => {
-        element.css('border', 'solid 1px ' + color3);
+        element.css('border-color', color3);
     });
     colors.B_COLOR_4.forEach(element => {
-        element.css('border', 'solid 1px ' + color4);
+        element.css('border-color', color4);
     });
     colors.B_COLOR_5.forEach(element => {
-        element.css('border', 'solid 1px ' + color5);
+        element.css('border-color', color5);
     });
     colors.B_COLOR_6.forEach(element => {
-        element.css('border', 'solid 1px ' + color6);
+        element.css('border-color', color6);
     });
 }
 
@@ -181,12 +189,19 @@ function saveState() {
 
 // toggle night mode:
 function toggleNight() {
-    nightMode = true;
+    nightMode = !nightMode;
+    $('.nav').remove();
+    createNavBar();
+    $('#defLangMenu').height(0);
     applyColors();
 }
 
 // create main content:
 function createMainContent() {
+    // add body to main background array:
+    colors.MAIN_BK.push($('body'));
+    // add page title to colors array:
+    colors.COLOR_1.push($('#pageHeader'));
     //step one container:
     const container = eHtml({ class: 'step1-container', container: page });
     // non select container:
@@ -228,6 +243,7 @@ function defaultLangDropClick(drop) {
                 height: '71px'
             }, 200, () => {
                 applyColors();
+                $('#defLangMenu').css('border', '1px solid')
             });
         } else {
             $('#defLangMenu').animate({ height: '0px', border: '0px' }, 200);
