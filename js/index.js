@@ -23,7 +23,7 @@ function handleDoc(data) {
     let wordsArr = extractDocWords(text, lang);
     // send server request to get translation:
     $.post('utils.php', { getArrTr: wordsArr }, (res) => {
-        console.log(res);
+        sessionStorage.setItem('data', JSON.stringify(res));
     }, 'json');
 }
 
