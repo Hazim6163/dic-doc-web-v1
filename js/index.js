@@ -24,6 +24,7 @@ function handleDoc(data) {
     // send server request to get translation:
     $.post('utils.php', { getArrTr: wordsArr }, (res) => {
         sessionStorage.setItem('data', JSON.stringify(res));
+        window.location.href = 'translation.html';
     }, 'json');
 }
 
