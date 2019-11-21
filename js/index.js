@@ -14,16 +14,17 @@ next.click(() => {
 });
 
 function handleDoc(data) {
+    // todo: ask user for the lang:
+    const lang = 'en';
     // remove custom chars:
     let text = data.text;
     text = cleanUp(text);
     //create words array:
-    const wordsArr = extractDocWords(text);
-    console.log(wordsArr);
-    //send server request to get translation:
-    // $.post('', {wordsArr: wordsArr}, (res)=>{
-    //     handleTranslation(res);
-    // })
+    let wordsArr = extractDocWords(text, lang);
+    // send server request to get translation:
+    $.post('utils.php', { getArrTr: wordsArr }, (res) => {
+        console.log(res);
+    }, 'json');
 }
 
 // clean up doc
@@ -76,13 +77,21 @@ function cleanUp(text) {
 }
 
 // extract words array from the doc:
-function extractDocWords(text) {
+function extractDocWords(text, lang) {
     //extract words:
     let wordsArr = text.split(' ');
+    const obj = new Array();
     //remove empty words
     wordsArr = wordsArr.filter((w) => {
         return w != '';
     })
+    //remove duplicated words: 
+    const uniq = new Set(wordsArr);
+    wordsArr = Array.from(uniq);
+    //convert word to obj with lang:
+    wordsArr.forEach(w => {
+        obj.push({ word: w, lang: lang });
+    });
 
-    return wordsArr;
+    return obj;
 }
