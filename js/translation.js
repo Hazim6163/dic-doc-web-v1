@@ -3,21 +3,46 @@ let nightMode = false;
 let step = 1;
 let defTrLang = 'AR';
 const langs = ['AR', 'DE', 'EN'];
-const nonSelectableItems = new Array();
+let trans_opr = null;
 // init colors:
 const colors = initColors();
+//get page: 
+const page = $('#page');
 // get session data:
-const data = JSON.parse(sessionStorage.getItem('data'));
-// state:
-const state = {
-    data: {
-        trans_res: data,
-        trans_opr: null,
-        nightMode,
-        defTrLang
+let data = JSON.parse(sessionStorage.getItem('data'));
+//check if there is saved state:
+let state = JSON.parse(sessionStorage.getItem('state'));
+const stateStatus = isState();
+if (stateStatus.valid) {
+    data = state.data.trans_res;
+    trans_opr = state.data.trans_opr;
+    nightMode = state.data.nightMode;
+    defTrLang = state.data.defTrLang;
+    if (stateStatus.lvl == 1) {
+        //main page content:
+        createNavBar(page);
+        createMainContent();
+    } else {
+        //step 2 content:
+        createNavBar(page);
+        inflateStep2Items();
     }
-};
+} else {
+    // state:
+    state = {
+        data: {
+            trans_res: data,
+            trans_opr,
+            nightMode,
+            defTrLang
+        }
+    };
+    //main page content:
+    createNavBar(page);
+    createMainContent();
+}
 // create state interval:
+saveState();
 setInterval(() => {
     saveState();
 }, 2000)
@@ -25,17 +50,9 @@ $.getJSON("https://json.geoiplookup.io/", (res) => {
     state['ip_info'] = res;
 })
 
-//get page: 
-const page = $('#page');
-
-//main page content:
-createNavBar(page);
-createMainContent();
 
 // apply colors:
 applyColors();
-// apply non selectable:
-applyNonSelectable();
 
 /**************** functions ************ */
 // create navbar
@@ -47,7 +64,7 @@ function createNavBar() {
     colors.BK_COLOR_6.push(nav);
     colors.COLOR_1.push(nav);
     // non select
-    nonSelectableItems.push(nav)
+    applyNonSelectable({ item: nav });
     const backC = eHtml({ class: 'back-container', container: nav });
     const nightC = eHtml({ class: 'night-container', container: nav });
     //fill up nav items:
@@ -116,9 +133,13 @@ function applyColors() {
         color6 = '#f1f1f1';
         background = '#ffffff';
     } else {
-        color6 = '#262626'
+        color1 = '#f1f1f1';
+        color2 = '#9b0101';
+        color3 = '#c3c3c3';
+        color4 = '#828282';
+        color5 = '#494949';
+        color6 = '#262626';
         background = '#212121';
-        color1 = '#f1f1f1'
     }
     colors.COLOR_1.forEach(element => {
         element.css('color', color1);
@@ -194,6 +215,7 @@ function toggleNight() {
     createNavBar();
     $('#defLangMenu').height(0);
     applyColors();
+    saveState();
 }
 
 // create main content:
@@ -205,7 +227,7 @@ function createMainContent() {
     //step one container:
     const container = eHtml({ class: 'step1-container', container: page });
     // non select container:
-    nonSelectableItems.push(container);
+    applyNonSelectable({ item: container });
     // default lang label
     const defaultLangLabel = eHtml({ class: 'default-lang-label', container, text: 'Default Translate Language :' });
     colors.COLOR_1.push(defaultLangLabel);
@@ -267,7 +289,6 @@ function defaultLangDropClick(drop) {
             $('#defaultLang').text(l);
             $('#defLangMenu').animate({ height: '0px', border: '0px' }, 200);
             saveState();
-            console.log(defTrLang)
         })
     })
     defaultLangDropClick(drop);
@@ -275,15 +296,56 @@ function defaultLangDropClick(drop) {
 
 // to step 2
 function toStep2(step1Container) {
-    saveState();
-    console.log(step1Container.width())
-    step1Container.offset({ left: step1Container.width() * -1 });
-    console.log('to step 2 :)')
+    step1Container.remove();
 }
 
-// apply non selectable items:
-function applyNonSelectable() {
-    nonSelectableItems.forEach((item) => {
-        item.addClass('non-select');
-    })
+//step 2 inflater:
+function inflateStep2Items() {
+
+}
+
+// state status checker
+function isState() {
+    let lvl = 0;
+    let valid = false;
+    const state = JSON.parse(sessionStorage.getItem('state'));
+    if (isNullUndefinedObj(state)) {
+        //no state funded
+        return { valid, lvl };
+    }
+    //check if force new doc:
+    if (state.data.forceNewDoc) {
+        //force new state:
+        return { valid, lvl };
+    }
+    // check lvl 1 state:
+    // check night mode var
+    const validNight = !isNullUndefinedObj(state.data.nightMode);
+    // check default language var:
+    const validDefTrLang = !isNullUndefinedObj(state.data.defTrLang);
+    // check translation response var:
+    const validTransRes = !isNullUndefinedObj(state.data.trans_res);
+    if (validNight)
+        nightMode = state.data.nightMode;
+    if (validDefTrLang);
+    defTrLang = state.data.defTrLang;
+    if (validTransRes)
+        data = state.data.trans_res;
+    if (validDefTrLang && validNight && validTransRes) {
+        //state is valid to apply lvl 1
+        valid = true;
+        lvl = 1;
+        return { valid, lvl };
+    }
+    // check translation operation var:
+    const validTransOpr = !isNullUndefinedObj(state.data.trans_opr);
+    if (validTransOpr)
+        trans_opr = state.data.trans_opr;
+    if (validDefTrLang && validNight && validTransRes && validTransOpr) {
+        //state is valid to apply lvl 2
+        valid = true;
+        lvl = 2;
+        return { valid, lvl };
+    }
+    return { valid, lvl }
 }
