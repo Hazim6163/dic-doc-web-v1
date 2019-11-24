@@ -21,14 +21,11 @@ function handleDoc(data) {
     text = cleanUp(text);
     //create words array:
     let wordsArr = extractDocWords(text, lang);
-    // send server request to get translation:
-    $.post('utils.php', { getArrTr: wordsArr }, (res) => {
-        sessionStorage.removeItem('data');
-        sessionStorage.removeItem('state');
-        res['forceNewDoc'] = true;
-        sessionStorage.setItem('data', JSON.stringify(res));
-        window.location.href = 'translation.html';
-    }, 'json');
+    $('body').empty();
+    const container = eHtml({class: 'text-container', container: $('body')});
+    wordsArr.forEach((word) =>{
+        container.append(eHtml({text: word+', '}));
+    })
 }
 
 // clean up doc
@@ -86,7 +83,6 @@ function extractDocWords(text, lang) {
     text = text.replace(/\n/g, ' ');
     console.log(text)
     let wordsArr = text.split(' ');
-    const obj = new Array();
     //remove empty words
     wordsArr = wordsArr.filter((w) => {
         return w != '';
@@ -94,10 +90,6 @@ function extractDocWords(text, lang) {
     //remove duplicated words: 
     const uniq = new Set(wordsArr);
     wordsArr = Array.from(uniq);
-    //convert word to obj with lang:
-    wordsArr.forEach(w => {
-        obj.push({ word: w, lang: lang });
-    });
 
-    return obj;
+    return wordsArr;
 }
