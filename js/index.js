@@ -23,6 +23,9 @@ function handleDoc(data) {
     let wordsArr = extractDocWords(text, lang);
     // send server request to get translation:
     $.post('utils.php', { getArrTr: wordsArr }, (res) => {
+        sessionStorage.removeItem('data');
+        sessionStorage.removeItem('state');
+        res['forceNewDoc'] = true;
         sessionStorage.setItem('data', JSON.stringify(res));
         window.location.href = 'translation.html';
     }, 'json');

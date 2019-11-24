@@ -4,6 +4,8 @@ let step = 1;
 let defTrLang = 'AR';
 const langs = ['AR', 'DE', 'EN'];
 let trans_opr = null;
+let wordsObj;
+let currentIndex = 1;
 // init colors:
 const colors = initColors();
 //get page: 
@@ -57,6 +59,10 @@ applyColors();
 /**************** functions ************ */
 // create navbar
 function createNavBar() {
+    // add body to main background array:
+    colors.MAIN_BK.push($('body'));
+    // add page title to colors array:
+    colors.COLOR_1.push($('#pageHeader'));
     //nav:
     const nav = eHtml({ class: 'nav' });
     page.prepend(nav);
@@ -205,6 +211,8 @@ function saveState() {
     state['time'] = new Date();
     state.data.nightMode = nightMode;
     state.defTrLang = defTrLang;
+    state.data.trans_opr = trans_opr;
+    state.data.trans_res.forceNewDoc = false;
     sessionStorage.setItem('state', JSON.stringify(state));
 }
 
@@ -220,10 +228,6 @@ function toggleNight() {
 
 // create main content:
 function createMainContent() {
-    // add body to main background array:
-    colors.MAIN_BK.push($('body'));
-    // add page title to colors array:
-    colors.COLOR_1.push($('#pageHeader'));
     //step one container:
     const container = eHtml({ class: 'step1-container', container: page });
     // non select container:
@@ -297,10 +301,37 @@ function defaultLangDropClick(drop) {
 // to step 2
 function toStep2(step1Container) {
     step1Container.remove();
+    inflateStep2Items();
 }
 
 //step 2 inflater:
 function inflateStep2Items() {
+    // step 2 container
+    const container = eHtml({ class: 'step2Container', container: page });
+    // translate editor:
+    const editorContainer = eHtml({ class: 'editor-container', container });
+    // side words nav
+    const sideWordsNav = eHtml({ class: 'side-words-nav', container });
+
+    // check if trans_opr has data:
+    if (trans_opr != null) {
+        wordsObj = trans_opr.wordsObj;
+        currentIndex = trans_opr.currentIndex;
+    } else {
+        // merge res words arrays
+        const words = mergeResWords();
+        // create word objects:
+        wordsObj = wordsArrToObj(words);
+        // init trans_opr:
+        trans_opr = { wordsObj: null, currentIndex: 0 };
+        trans_opr.wordsObj = wordsObj;
+        trans_opr.currentIndex = currentIndex;
+        saveState();
+    }
+
+    // create editor:
+    createEditor(editorContainer);
+    createWordsNav(sideWordsNav);
 
 }
 
@@ -314,7 +345,7 @@ function isState() {
         return { valid, lvl };
     }
     //check if force new doc:
-    if (state.data.forceNewDoc) {
+    if (state.data.trans_res.forceNewDoc) {
         //force new state:
         return { valid, lvl };
     }
@@ -335,7 +366,6 @@ function isState() {
         //state is valid to apply lvl 1
         valid = true;
         lvl = 1;
-        return { valid, lvl };
     }
     // check translation operation var:
     const validTransOpr = !isNullUndefinedObj(state.data.trans_opr);
@@ -345,7 +375,56 @@ function isState() {
         //state is valid to apply lvl 2
         valid = true;
         lvl = 2;
-        return { valid, lvl };
     }
     return { valid, lvl }
+}
+
+// merge new words and translated words from the doc translate response:
+function mergeResWords() {
+    const words = new Array();
+    data.wordsNew.forEach((w) => {
+        w['newWord'] = true;
+        words.push(w)
+    });
+    data.wordsTr.forEach((w) => {
+        w['newWord'] = false;
+        words.push(w);
+    })
+
+    return words;
+}
+
+// create words objects from the array return words objects array:
+function wordsArrToObj(arr) {
+    // words objectsArr:
+    const wordsObj = new Array();
+    // word index:
+    let index = 0;
+    arr.forEach((w) => {
+        // increase index counter
+        index++;
+        // create word object push to arr:
+        wordsObj.push(new Word(w, index));
+    })
+    // return wordsObjects
+    return wordsObj;
+}
+
+// create words editor:
+function createEditor(container) {
+    console.log(wordsObj);
+    const currentWord = getWordByIndex(currentIndex);
+    console.log(currentWord);
+}
+
+//get word by index:
+function getWordByIndex(index) {
+    return wordsObj.find((o) => {
+        return o.index == index;
+    });
+}
+
+// create words nav:
+function createWordsNav(container) {
+
 }
