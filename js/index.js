@@ -83,6 +83,8 @@ function cleanUp(text) {
 // extract words array from the doc:
 function extractDocWords(text, lang) {
     //extract words:
+    text = text.replace(/\n/g, ' ');
+    console.log(text)
     let wordsArr = text.split(' ');
     const obj = new Array();
     //remove empty words

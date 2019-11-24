@@ -92,3 +92,41 @@
 .lang-menu-item {
     cursor: pointer;
 }
+
+/*************************************/
+/* word editor */
+/*************************************/
+.word-lang {
+    padding: 8px;
+    border: 1px solid;
+    border-radius: 15px;
+    margin: -1px;
+}
+
+.word-label {
+    padding: 8px;
+    min-width: 150px;
+}
+
+.word-edit-icon-container {
+    padding: 8px;
+}
+
+.word-editor-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 36px;
+}
+
+.word-container {
+    display: flex;
+    justify-content: center;
+    border: 2px solid;
+    border-radius: 15px;
+    box-sizing: border-box;
+}
+
+/*************************************/
+/* end word editor */
+/*************************************/

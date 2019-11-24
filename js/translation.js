@@ -1,7 +1,7 @@
 // vars:
 let nightMode = false;
 let step = 1;
-let defTrLang = 'AR';
+let defTrLang;
 const langs = ['AR', 'DE', 'EN'];
 let trans_opr = null;
 let wordsObj;
@@ -331,6 +331,7 @@ function inflateStep2Items() {
 
     // create editor:
     createEditor(editorContainer);
+    // create words nav:
     createWordsNav(sideWordsNav);
 
 }
@@ -412,9 +413,15 @@ function wordsArrToObj(arr) {
 
 // create words editor:
 function createEditor(container) {
-    console.log(wordsObj);
-    const currentWord = getWordByIndex(currentIndex);
-    console.log(currentWord);
+    console.log(wordsObj)
+    const currentWord = getWordByIndex(currentIndex+1);
+    originalWoEdContainer(currentWord).appendTo(container);
+    // check if the word obj has default lang translations:
+    if(isTr(currentWord, defTrLang)){
+        console.log('passed')
+        trLangWosEdsContainer(currentWord, defTrLang).appendTo(container);
+    }
+    
 }
 
 //get word by index:
