@@ -54,3 +54,24 @@
     text-align: center;
     margin-top: 5rem;
 }
+
+.wordContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.removeWordIconContainer {
+    color: red;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.word {
+    padding: 8px;
+}
+
+.copyIconContainer {
+    color: gray;
+    padding: 8px;
+    cursor: pointer;
+}

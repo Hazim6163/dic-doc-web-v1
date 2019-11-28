@@ -22,10 +22,35 @@ function handleDoc(data) {
     //create words array:
     let wordsArr = extractDocWords(text, lang);
     $('body').empty();
-    const container = eHtml({class: 'text-container', container: $('body')});
-    wordsArr.forEach((word) =>{
-        container.append(eHtml({text: word+', '}));
+    $('body').append(eHtml({ class: 'text-container', id: 'textContainer' }));
+    const container = eHtml({ class: 'text-container', container: $('body') });
+    wordsArr.forEach((word) => {
+        createWordContainer(word);
     })
+}
+
+// create word container:
+function createWordContainer(word) {
+    const container = eHtml({ class: 'wordContainer' });
+    const remove = eHtml({ class: 'removeWordIconContainer', html: '<i class="fas fa-minus-square"></i>', container });
+    remove.click(() => {
+        container.remove();
+    })
+    const wContainer = eHtml({ class: 'word', text: word, container });
+    const copy = eHtml({ class: 'copyIconContainer', html: '<i class="far fa-copy"></i>', container });
+    copy.click(() => {
+        const el = document.createElement('textarea');
+        el.value = word;
+        el.setAttribute('readonly', '');
+        el.style.position = 'absolute';
+        el.style.left = '-9999px';
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+    })
+
+    $('#textContainer').append(container);
 }
 
 // clean up doc
